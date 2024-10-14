@@ -1,0 +1,154 @@
+body {
+    display: flex;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh; /* Full height */
+    background-color: #f0f0f0;
+}
+
+.chat-container {
+    display: flex;
+    width: 100%;
+    max-width: 1600px; /* Increased max-width for a wider chat window */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent overflow of elements */
+}
+
+.sidebar {
+    width: 250px; /* Width of the user list sidebar */
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto; /* Allow scrolling if there are many users */
+}
+
+.chat-window-container {
+    flex-grow: 1; /* Fill the remaining space */
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.chat-window {
+    flex-grow: 1; /* Allow chat window to grow */
+    padding: 15px;
+    height: 600px;
+    overflow-y: auto; /* Allow scrolling */
+    background-color: #fff; /* Chat window background */
+    border-bottom: 1px solid #ddd;
+    position: relative; /* Relative position for the back button */
+}
+
+.chat-input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #f9f9f9; /* Input background */
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.send-button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-user-container {
+    padding: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+}
+
+.add-user-container input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.user-list {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto; /* Allows scrolling if there are many users */
+}
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.member-title {
+    font-weight: bold;
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 10px;
+}
+
+.message.user {
+    text-align: right;
+}
+
+.message.partner {
+    text-align: left;
+}
+
+.message .text {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.message.user .text {
+    background-color: #007bff;
+    color: white;
+}
+
+.message.partner .text {
+    background-color: #f0f0f0;
+    color: black;
+}
+
+.back-button {
+    background-color: #6c757d; /* Gray color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px; /* Smaller padding for a smaller button */
+    position: absolute; /* Position the button absolutely */
+    top: 10px; /* Distance from the top */
+    right: 10px; /* Distance from the right */
+    font-size: 12px; /* Smaller font size */
+    z-index: 10; /* Ensure it's on top of other elements */
+}

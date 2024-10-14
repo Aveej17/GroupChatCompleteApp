@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp</title>
+    <link rel="stylesheet" href="./chat.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="sidebar" id="userListContainer">
+            <div class="member-title">Members</div>
+            <div class="user-list" id="userList">
+                <!-- Users will be displayed here -->
+            </div>
+        </div>
+
+        <div class="chat-window-container">
+            <div class="chat-header">ChatApp</div>
+            <button id="backButton" class="back-button">Back</button>
+            <div class="chat-window" id="chatWindow">
+                <!-- Chat messages will be displayed here -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Type your message...">
+                <button id="sendButton" class="send-button">Send</button>
+            </div>
+            <div class="add-user-container">
+                <input type="text" id="newUserEmail" placeholder="Email of user to add" />
+                <button id="addUserButton" class="send-button">Add User</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./chat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+</body>
+</html>
