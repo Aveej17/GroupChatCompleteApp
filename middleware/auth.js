@@ -40,7 +40,7 @@ exports.authentication = (req, res, next) => {
  // Correct import from index.js
 
  exports.isAdmin = async (req, res, next) => {
-     console.log("checking access");
+    //  console.log("checking access");
      
      const userId = req.body.authId; // Get user ID from the authenticated user
      const groupId = req.params.groupId; // Get group ID from the request parameters

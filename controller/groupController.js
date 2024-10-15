@@ -15,13 +15,13 @@ exports.getGroups = async (req, res) => {
 
         return res.status(200).json({ groups, success: true });
     } catch (error) {
-        console.error("Error retrieving user groups:", error);
+        // console.error("Error retrieving user groups:", error);
         return res.status(500).json({ success: false, message: "An error occurred while retrieving groups." });
     }
 };
 
 exports.getGroup = async (req, res) => {
-    console.log("Called");
+    // console.log("Called");
     
     const userId = req.body.authId;
 
@@ -42,7 +42,7 @@ exports.getGroup = async (req, res) => {
 
         return res.status(200).json({ group, success: true });
     } catch (error) {
-        console.error("Error retrieving group:", error);
+        // console.error("Error retrieving group:", error);
         return res.status(500).json({ success: false, message: "An error occurred while retrieving the group." });
     }
 };
@@ -57,7 +57,7 @@ exports.createGroup = async (req, res) => {
 
         const user = await User.findOne({ where: { id: authId } });
         if (!user) {
-            console.error("User not found:", authId);
+            // console.error("User not found:", authId);
             return res.status(404).json({ success: false, message: "User not found." });
         }
 
@@ -66,13 +66,13 @@ exports.createGroup = async (req, res) => {
 
         return res.status(201).json({ data: newGroup, success: true });
     } catch (error) {
-        console.error("Error creating group:", error);
+        // console.error("Error creating group:", error);
         return res.status(500).json({ success: false, message: "An error occurred while creating the group." });
     }
 };
 
 exports.addUser = async (req, res) => {
-    console.log("add User Gets called");
+    // console.log("add User Gets called");
 
     const { email } = req.body;
     const groupId = req.params.groupId;
@@ -107,13 +107,13 @@ exports.addUser = async (req, res) => {
 
         return res.status(200).json({ success: true, message: "User added to group", user });
     } catch (error) {
-        console.error("Error adding user:", error);
+        // console.error("Error adding user:", error);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
 
 exports.getUsers = async (req, res) => {
-    console.log("get users called");
+    // console.log("get users called");
 
     const groupId = req.params.groupId;
 
@@ -139,7 +139,7 @@ exports.getUsers = async (req, res) => {
         // console.log(users); // This will log only user details
         return res.status(200).json({ users });
     } catch (error) {
-        console.error("Error fetching users:", error);
+        // console.error("Error fetching users:", error);
         return res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -149,7 +149,7 @@ exports.removeUser = async (req, res) => {
     const userId = req.params.userId;
 
     if(req.body.authId == userId){
-        console.log("Admin should not leave his group as of now");
+        // console.log("Admin should not leave his group as of now");
         return res.status(404).json({success:false, message:"Admin Should not leave"});
         
     }
@@ -176,7 +176,7 @@ exports.removeUser = async (req, res) => {
 
         return res.status(200).json({ success: true, message: 'User removed from the group successfully' });
     } catch (error) {
-        console.error("Error removing user from group:", error);
+        // console.error("Error removing user from group:", error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
@@ -211,7 +211,7 @@ exports.updateUserRole = async (req, res) => {
             message: `User ${isAdmin ? 'promoted to admin' : 'demoted to normal user'} successfully`
         });
     } catch (error) {
-        console.error("Error updating user role:", error);
+        // console.error("Error updating user role:", error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

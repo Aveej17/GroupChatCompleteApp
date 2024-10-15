@@ -18,7 +18,7 @@ if (createGroupButton) {
 const logoutButton = document.getElementById("logoutButton");
 if (logoutButton) {
     logoutButton.addEventListener("click", () => {
-        console.log("Logout button clicked");
+        // console.log("Logout button clicked");
         alert("You are going to logout");
         localStorage.removeItem("token"); // Clear token
         window.location.href = "../login/login.html"; // Redirect to login page
@@ -39,7 +39,7 @@ async function loadUserGroups() {
         });
 
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         
         if (data.success) {
             const groupList = document.getElementById("groupList");

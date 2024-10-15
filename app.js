@@ -9,6 +9,9 @@ const User = require('./models/userModel');
 const Group = require('./models/groupModel');
 const userGroup = require('./models/userGroups');
 
+
+const chatController = require('./controller/chatController');
+
 require('dotenv').config();
 
 const app = express();
@@ -41,34 +44,84 @@ const server = app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
 });
 
+// Create WebSocket server attached to the HTTP server
 const wss = new WebSocket.Server({ server });
+
+// Store group connections and group messages
+const groupClients = new Map(); // Key: groupId, Value: Set of clients (WebSocket connections)
+const groupMessages = new Map(); // Key: groupId, Value: Array of messages
+const activeGroup = new Map(); // Key: WebSocket client, Value: currently active groupId
 
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
-    console.log('New client connected');
+    // console.log('New client connected');
 
-    ws.on('message', (message) => {
+    // Handle incoming messages
+    ws.on('message', async (message) => {
         const msg = JSON.parse(message);
+
         if (msg.type === 'chat') {
-            // Broadcast the message to all connected clients
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(msg));
+            const { groupId, content, userName, type } = msg;
+            // console.log(msg);
+            
+            await chatController.createChat(msg);
+            // console.log("messageReceived");
+            
+
+            // Ensure the client is only sending messages to the group they have joined
+            if (activeGroup.get(ws) === groupId) {
+                // Store the message in the group's message history
+                if (!groupMessages.has(groupId)) {
+                    groupMessages.set(groupId, []);
                 }
-            });
+                groupMessages.get(groupId).push({ userName, content, type });
+
+                // Broadcast the message to all clients in the group
+                if (groupClients.has(groupId)) {
+                    groupClients.get(groupId).forEach((client) => {
+                        if (client.readyState === WebSocket.OPEN) {
+                            client.send(JSON.stringify({ userName, content, groupId, type }));
+                        }
+                    });
+                }
+            }
+        } else if (msg.type === 'joinGroup') {
+            const { groupId } = msg;
+            // console.log(groupId ,"Joined to chat");
+            
+
+            // Add the client to the new group, but make only one group active at a time
+            if (!groupClients.has(groupId)) {
+                groupClients.set(groupId, new Set());
+            }
+            groupClients.get(groupId).add(ws);
+
+            // Set this group as the active group for the client
+            activeGroup.set(ws, groupId);
+
+            // Send pending messages from the newly active group
+            if (groupMessages.has(groupId)) {
+                const pendingMessages = groupMessages.get(groupId);
+                pendingMessages.forEach((pendingMessage) => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify(pendingMessage));
+                    }
+                });
+            }
         }
     });
 
+    // Handle client disconnect
     ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
+        // console.log('Client disconnected');
 
-sequelize
-.sync()
-.then(result => {
-        // app.listen(process.env.PORT); // Removed since we are using server variable
-})
-.catch(err => {
-        console.log(err);
+        // Remove the client from all group memberships and active group tracking
+        activeGroup.delete(ws);
+        groupClients.forEach((clients, groupId) => {
+            clients.delete(ws);
+            if (clients.size === 0) {
+                groupClients.delete(groupId); // Clean up empty groups
+            }
+        });
+    });
 });

@@ -11,7 +11,7 @@ async function hashPassword(password, saltRounds) {
         
         return hash; 
     } catch (err) {
-        console.error(err);
+        // console.error(err);
     }
 }
 
@@ -68,7 +68,8 @@ exports.createUser = async (req, res, next)=>{
             res.status(409).send("user Already Exists");
         }
     }
-    catch(err){console.log(err)}
+    catch(err){//console.log(err)
+    }
 }
 
 exports.loginUser = async (req, res, next)=>{
@@ -103,10 +104,10 @@ exports.loginUser = async (req, res, next)=>{
         
     }
     catch(err){
-        console.log(err);
+        // console.log(err);
     }
 }
 
 exports.check = (req, res, next)=>{
-    console.log("reached"); 
+    // console.log("reached"); 
 }

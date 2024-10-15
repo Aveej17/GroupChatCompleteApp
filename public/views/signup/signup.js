@@ -10,8 +10,9 @@ async function handleFormSubmit(event){
 
         }
         let response = await axios.post("http://34.227.178.35:4000/users/signup", userDetails);
-        console.log(response);
-        alert("User Signed In Successfully");
+        // console.log(response);
+        // alert("User Signed In Successfully");
+        window.location.href = "../login/login.html";
     }
     catch(err){
         console.log("Error: ", err);

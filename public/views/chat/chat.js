@@ -33,14 +33,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initialize WebSocket connection
     socket = new WebSocket('ws://34.227.178.35:4000'); // Change port if necessary
-  
 
     socket.onopen = () => {
-        console.log("WebSocket connection established");
+        // console.log("WebSocket connection established");
+        // joinGroup();
+        const joinDetails = {
+            type: 'joinGroup',
+            groupId: groupId
+        };
+        socket.send(JSON.stringify(joinDetails));
+        // console.log("Join Group : groupId =>", groupId);
+        
     };
 
     socket.onmessage = (event) => {
         const msg = JSON.parse(event.data);
+        // msg.type = 'chat';
+        // console.log("Sending message");
+        // console.log(msg);
+        
+        
         if (msg.type === 'chat') {
             // Append new message to chat window
             const chatWindow = document.getElementById("chatWindow");
@@ -64,12 +76,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function sendMessage() {
     try {
         const params = new URLSearchParams(window.location.search);
-        const groupId = params.get("groupId");
+        const groupId = params.get("groupId"); // Ensure groupId is present in the URL
         const messageContent = document.getElementById('chatInput').value;
         const userName = localStorage.getItem("name");
+        const userId = localStorage.getItem('userId');
+        
         const chatDetails = {
+            userId:userId,
             content: messageContent,
-            groupId: groupId,
+            groupId: groupId, // Specify group ID
             userName: userName, // Replace with actual user name
             type: 'chat' // Message type
         };
@@ -244,7 +259,7 @@ async function removeUserFromGroup(userId, groupId) {
         });
 
         if (response.data.success) {
-            console.log("User removed:", userId);
+            // console.log("User removed:", userId);
             loadGroupUsers(groupId); // Reload users after removal
         }
     } catch (error) {
@@ -265,7 +280,7 @@ document.getElementById("addUserButton").addEventListener("click", async () => {
         });
 
         if (response.data.success) {
-            console.log("User added:", email);
+            // console.log("User added:", email);
             loadGroupUsers(groupId); // Reload users after adding
             document.getElementById("newUserEmail").value = ""; // Clear input field
         }

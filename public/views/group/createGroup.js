@@ -11,7 +11,7 @@ document.getElementById("createGroupForm").addEventListener("submit", async func
         description: groupDescription
     };
 
-    console.log(groupDetails);
+    // console.log(groupDetails);
     
     try {
         const response = await fetch("http://34.227.178.35:4000/groups/create", {
