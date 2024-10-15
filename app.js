@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const sequelize = require('./utils/database');
 const WebSocket = require('ws');
+const s3 = require('./controller/awsS3Controller');
 
 const User = require('./models/userModel');
 const Group = require('./models/groupModel');
@@ -23,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const groupRoutes = require('./routes/groupsRoutes');
+
 
 app.use('/users', userRoutes);
 app.use('/chats', chatRoutes);
@@ -54,7 +56,7 @@ const activeGroup = new Map(); // Key: WebSocket client, Value: currently active
 
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
-    // console.log('New client connected');
+    console.log('New client connected');
 
     // Handle incoming messages
     ws.on('message', async (message) => {
@@ -62,7 +64,8 @@ wss.on('connection', (ws) => {
 
         if (msg.type === 'chat') {
             const { groupId, content, userName, type } = msg;
-            // console.log(msg);
+            console.log(msg);
+            msg.type = "text";
             
             await chatController.createChat(msg);
             // console.log("messageReceived");
@@ -85,7 +88,62 @@ wss.on('connection', (ws) => {
                     });
                 }
             }
-        } else if (msg.type === 'joinGroup') {
+        } 
+        else if (msg.type === 'file') {
+            const { groupId, fileName, content, userName } = msg;
+            // const { groupId, fileName, userName } = msg;
+            // console.log(msg.fileName);
+            console.log(msg);
+            
+            
+            // help me to upload the file into s3 and save the file location in chat table (or new table) 
+            // doubt if new table how to maintain the order of the message
+
+            // reference one file i uploaded
+            // const content = "https://groupchatappimagesbuckets.s3.amazonaws.com/watchWomen.jpg";
+            console.log(fileName);
+            
+            
+            // console.log("File message received:", msg);
+            const buffer = Buffer.from(content.split(',')[1]);
+            console.log(buffer);
+            try{
+                const fileUrl = await s3.uploadFileToS3(fileName, buffer);
+
+                console.log("File uploaded to S3:", fileUrl);
+
+            //     // Save the file URL in the database (same table as messages or new one)
+                const chatData = {
+                    userId: msg.userId,
+                    groupId: groupId,
+                    content: fileUrl, // Save the URL instead of file content
+                    type: 'file', // Differentiate between text and file message
+                    fileName: fileName // Optional: Save file name for reference
+                };
+
+                await chatController.createChat(chatData);
+            }
+            catch(err){
+                console.log(err);
+                
+            }
+            // Store the file in the group's message history (optional)
+            if (!groupMessages.has(groupId)) {
+                groupMessages.set(groupId, []);
+            }
+            groupMessages.get(groupId).push({ userName, content, fileName, type: 'file' });
+
+            // Broadcast the file message to all clients in the group
+            if (groupClients.has(groupId)) {
+                groupClients.get(groupId).forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ userName, content, fileName, groupId, type: 'file' }));
+                    }
+                });
+            }
+        } 
+        
+        else if (msg.type === 'joinGroup') {
             const { groupId } = msg;
             // console.log(groupId ,"Joined to chat");
             
@@ -113,7 +171,7 @@ wss.on('connection', (ws) => {
 
     // Handle client disconnect
     ws.on('close', () => {
-        // console.log('Client disconnected');
+        console.log('Client disconnected');
 
         // Remove the client from all group memberships and active group tracking
         activeGroup.delete(ws);
@@ -125,3 +183,12 @@ wss.on('connection', (ws) => {
         });
     });
 });
+
+sequelize
+    .sync()
+    .then(result => {
+        // app.listen(process.env.PORT); // Removed since we are using server variable
+    })
+    .catch(err => {
+        console.log(err);
+    });

@@ -13,6 +13,7 @@ async function handleFormSubmit(event){
         let response = await axios.post("http://34.227.178.35:4000/users/login", UserDetails);
         // console.log(response.data.token);
         localStorage.setItem('name', response.data.data.name);
+        localStorage.setItem('userId', response.data.data.id);
         // console.log(response.data.data.name);
         
         localStorage.setItem("token", response.data.token);
