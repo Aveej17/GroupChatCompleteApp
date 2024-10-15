@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadGroupDetails(groupId);
         await loadGroupMessages(groupId);
     } else {
-        console.error("No groupId provided");
+        // console.error("No groupId provided");
     }
 
     const chatInput = document.getElementById("chatInput");
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             groupId: groupId
         };
         socket.send(JSON.stringify(joinDetails));
-        console.log("Join Group : groupId =>", groupId);
+        // console.log("Join Group : groupId =>", groupId);
     };
 
     socket.onmessage = (event) => {
@@ -115,7 +115,7 @@ async function sendMessage() {
         const userName = localStorage.getItem("name"); // Use userName instead of name
         const userId = localStorage.getItem('userId');
         if(messageContent == ''){
-            console.log("typesomething");
+            // console.log("typesomething");
             return;
         }
         const chatDetails = {

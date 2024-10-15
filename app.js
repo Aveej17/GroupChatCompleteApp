@@ -64,7 +64,7 @@ wss.on('connection', (ws) => {
 
         if (msg.type === 'chat') {
             const { groupId, content, userName, type } = msg;
-            console.log(msg);
+            // console.log(msg);
             msg.type = "text";
             
             await chatController.createChat(msg);
@@ -93,7 +93,7 @@ wss.on('connection', (ws) => {
             const { groupId, fileName, content, userName } = msg;
             // const { groupId, fileName, userName } = msg;
             // console.log(msg.fileName);
-            console.log(msg);
+            // console.log(msg);
             
             
             // help me to upload the file into s3 and save the file location in chat table (or new table) 
@@ -101,12 +101,12 @@ wss.on('connection', (ws) => {
 
             // reference one file i uploaded
             // const content = "https://groupchatappimagesbuckets.s3.amazonaws.com/watchWomen.jpg";
-            console.log(fileName);
+            // console.log(fileName);
             
             
             // console.log("File message received:", msg);
             const buffer = Buffer.from(content.split(',')[1]);
-            console.log(buffer);
+            // console.log(buffer);
             try{
                 const fileUrl = await s3.uploadFileToS3(fileName, buffer);
 
