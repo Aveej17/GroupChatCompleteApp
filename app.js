@@ -10,6 +10,7 @@ const User = require('./models/userModel');
 const Group = require('./models/groupModel');
 const userGroup = require('./models/userGroups');
 
+const {scheduleArchiving} = require('./cronJob/cronjob');
 
 const chatController = require('./controller/chatController');
 
@@ -40,6 +41,8 @@ app.use((req, res) => {
 
 User.belongsToMany(Group, { through: userGroup, foreignKey: 'userId' });
 Group.belongsToMany(User, { through: userGroup, foreignKey: 'groupId' });
+
+scheduleArchiving();
 
 // Set up WebSocket server
 const server = app.listen(process.env.PORT, () => {
@@ -102,7 +105,7 @@ wss.on('connection', (ws) => {
             // reference one file i uploaded
             // const content = "https://groupchatappimagesbuckets.s3.amazonaws.com/watchWomen.jpg";
             // console.log(fileName);
-            
+            x
             
             // console.log("File message received:", msg);
             // const buffer = Buffer.from(content.split(',')[1]);
