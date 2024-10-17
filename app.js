@@ -56,7 +56,7 @@ const activeGroup = new Map(); // Key: WebSocket client, Value: currently active
 
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
-    console.log('New client connected');
+    // console.log('New client connected');
 
     // Handle incoming messages
     ws.on('message', async (message) => {
@@ -105,12 +105,13 @@ wss.on('connection', (ws) => {
             
             
             // console.log("File message received:", msg);
-            const buffer = Buffer.from(content.split(',')[1]);
+            // const buffer = Buffer.from(content.split(',')[1]);
+            const buffer = Buffer.from(content.split(',')[1], 'base64');
             // console.log(buffer);
             try{
                 const fileUrl = await s3.uploadFileToS3(fileName, buffer);
 
-                console.log("File uploaded to S3:", fileUrl);
+                // console.log("File uploaded to S3:", fileUrl);
 
             //     // Save the file URL in the database (same table as messages or new one)
                 const chatData = {
@@ -124,7 +125,8 @@ wss.on('connection', (ws) => {
                 await chatController.createChat(chatData);
             }
             catch(err){
-                console.log(err);
+                // console.log(err);
+                alert(err);
                 
             }
             // Store the file in the group's message history (optional)
@@ -171,7 +173,7 @@ wss.on('connection', (ws) => {
 
     // Handle client disconnect
     ws.on('close', () => {
-        console.log('Client disconnected');
+        // console.log('Client disconnected');
 
         // Remove the client from all group memberships and active group tracking
         activeGroup.delete(ws);

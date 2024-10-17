@@ -14,7 +14,7 @@ exports.uploadFileToS3 = async (fileName, fileContent) => {
         Bucket: process.env.BUCKET_NAME, // Your bucket name
         Key: fileName, // File name you want to save as
         Body: fileContent, // File content (binary data)
-        ContentType: 'image/jpeg', // Change this to the correct content type for your file
+        ContentType: 'image/jpg', // Change this to the correct content type for your file
         ACL:'public-read'
     };
 
@@ -22,7 +22,7 @@ exports.uploadFileToS3 = async (fileName, fileContent) => {
         const data = await s3.upload(params).promise();
         return data.Location; // This returns the file URL
     } catch (err) {
-        console.error("Error uploading file to S3:", err);
+        // console.error("Error uploading file to S3:", err);
         throw new Error("File upload failed");
     }
 };

@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadGroupMessages(groupId);
     } else {
         // console.error("No groupId provided");
+        alert("No groupId provided");
     }
 
     const chatInput = document.getElementById("chatInput");
@@ -36,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     document.getElementById("backButton").addEventListener("click", () => {
-        localStorage.removeItem("chats");
+        // localStorage.removeItem("chats");
         window.history.back();
     });
 
@@ -52,50 +53,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             groupId: groupId
         };
         socket.send(JSON.stringify(joinDetails));
-        // console.log("Join Group : groupId =>", groupId);
+        console.log("Join Group : groupId =>", groupId);
     };
 
-    socket.onmessage = (event) => {
+    socket.onmessage = async (event) => {
         const msg = JSON.parse(event.data);
         // console.log(msg);
-        
-        if (msg.type === 'chat') {
-            // Append new message to chat window
-
-            // const latestChats = localStorage.getItem('chats');
-            // console.log(typeof(latestChats));
-            // latestChats.pushback(msg);
-            // console.log(typeof(latestChats));
-            
-            // latestChats.slice(-20);
-            // localStorage.setItem("chats", JSON.stringify(latestChats));
-            const chatWindow = document.getElementById("chatWindow");
-            const chatMessage = document.createElement("div");
-            chatMessage.classList.add("chat-message");
-            chatMessage.textContent = `${msg.userName}: ${msg.content}`; // Assuming msg has userName and content
-            chatWindow.appendChild(chatMessage);
-            chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to the bottom
-        }
-
-        if (msg.type === 'file') {
-            // console.log(msg);
-            
-            // Append file message to chat window
-            // const latestChats = localStorage.getItem('chats');
-            // latestChats.pushback(msg);
-            // latestChats.slice(-20);
-            // localStorage.setItem("chats", JSON.stringify(latestChats));
-
-            const chatWindow = document.getElementById("chatWindow");
-            const chatMessage = document.createElement("div");
-            if (msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.jpeg')) {
-                chatMessage.innerHTML = `${msg.userName}: <img src="${msg.content}" alt="${msg.fileName}" style="max-width: 200px; max-height: 200px;"/>`; // Display uploaded image
-            } else {
-                chatMessage.innerHTML = `${msg.userName}: <a href="${msg.content}" target="_blank">${msg.fileName}</a>`; // Display uploaded file link
-            }
-            chatWindow.appendChild(chatMessage);
-            chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to the bottom
-        }
+        const groupId = params.get("groupId");
+        await loadGroupMessages(groupId);
     };
 
     socket.onerror = (error) => {
@@ -115,7 +80,7 @@ async function sendMessage() {
         const userName = localStorage.getItem("name"); // Use userName instead of name
         const userId = localStorage.getItem('userId');
         if(messageContent == ''){
-            // console.log("typesomething");
+            console.log("typesomething");
             return;
         }
         const chatDetails = {
@@ -191,10 +156,12 @@ async function loadGroupDetails(groupId) {
 // Function to load messages for the specific group
 async function loadGroupMessages(groupId) {
     try {
+       
         const token = localStorage.getItem("token");
-
+        console.log(groupId+"gID");
+        
         // Retrieve existing chats from local storage and parse
-        let existingChats = JSON.parse(localStorage.getItem("chats")) || [];
+        let existingChats = JSON.parse(localStorage.getItem(`${groupId}chats`)) || [];
         console.log(existingChats);
         
         // Get the last chat ID from existing chats
@@ -228,11 +195,11 @@ async function loadGroupMessages(groupId) {
             // Keep only the latest 100 messages
             let latestChats = mergedChats.slice(-20);
 
-            console.log(typeof(latestChats) ,"type of loading messages");
+            // console.log(typeof(latestChats) ,"type of loading messages");
             
 
             // Update local storage
-            localStorage.setItem("chats", JSON.stringify(latestChats));
+            localStorage.setItem(`${groupId}chats`, JSON.stringify(latestChats));
 
             // Update the chat window
             const chatWindow = document.getElementById("chatWindow");
@@ -258,20 +225,27 @@ async function loadGroupMessages(groupId) {
 
 function displayMessage(message) {
     const chatWindow = document.getElementById("chatWindow");
+    console.log(message);
 
     if (message.type === 'text') {
         // Render text message
+        // console.log(message);
         const chatMessage = document.createElement("div");
         chatMessage.textContent = `${message.User.name}: ${message.content}`;
         chatWindow.appendChild(chatMessage);
     } else if (message.type === 'file') {
         // Render file (image or file link)
         const chatMessage = document.createElement("div");
+        // console.log(message.fileName);
+        
 
-        if (message.fileName.endsWith('.jpg') || message.fileName.endsWith('.png')) {
-            chatMessage.innerHTML = `${message.User.name}: <img src="${message.content}" alt="${message.fileName}" style="max-width: 200px; max-height: 200px;" />`;
+        if (message.content.endsWith('.jpg') || message.content.endsWith('.png')) {
+            // console.log("endingWith");
+            console.log("endingWith", message.content); 
+            
+            chatMessage.innerHTML = `${message.User.name}: <img src="${message.content}" alt="${message.type}" style="max-width: 200px; max-height: 200px;" />`;
         } else {
-            chatMessage.innerHTML = `${message.User.name}: <a href="${message.content}" target="_blank">${message.fileName}</a>`;
+            chatMessage.innerHTML = `${message.User.name}: <a href="${message.content}" target="_blank">${message.type}</a>`;
         }
 
         chatWindow.appendChild(chatMessage);
@@ -385,7 +359,7 @@ document.getElementById("addUserButton").addEventListener("click", async () => {
         }
     } catch (error) {
         document.getElementById("newUserEmail").value = ""; 
-        alert("unable to add user")
+        alert("unable to add user");
         console.error("Error adding user:", error);
     }
 });

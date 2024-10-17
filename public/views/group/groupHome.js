@@ -8,23 +8,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 const createGroupButton = document.getElementById("createGroupButton");
 if (createGroupButton) {
     createGroupButton.addEventListener("click", () => {
-        console.log("Create Group button clicked");
+        // console.log("Create Group button clicked");
         alert("You are going to create a new group");
         window.location.href = "./createGroup.html"; // Redirect to create group page
     });
 } else {
-    console.error("Create Group Button not found in DOM");
+    // console.error("Create Group Button not found in DOM");
+    alert("Create Group Button not found in DOM");
 }
 const logoutButton = document.getElementById("logoutButton");
 if (logoutButton) {
     logoutButton.addEventListener("click", () => {
         // console.log("Logout button clicked");
         alert("You are going to logout");
-        localStorage.removeItem("token"); // Clear token
+        // localStorage.removeItem("token"); // Clear token
+        localStorage.clear();
         window.location.href = "../login/login.html"; // Redirect to login page
     });
 } else {
-    console.error("Logout Button not found in DOM");
+    // console.error("Logout Button not found in DOM");
+    alert("Logout Button not found in DOM")
 }
 
 
@@ -64,6 +67,7 @@ async function loadUserGroups() {
             alert("Failed to load groups.");
         }
     } catch (error) {
-        console.error("Error loading groups:", error);
+        // console.error("Error loading groups:", error);
+        alert("Error loading groups:", error);
     }
 }

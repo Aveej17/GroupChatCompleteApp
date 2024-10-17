@@ -1,8 +1,8 @@
 const Chat = require('../models/chatModel');
-const isStringValid = require('../utils/stringValidation');
+
 
 const User = require('../models/userModel');  // Assuming you have a User model
-const { where } = require('sequelize');
+
 const { Op } = require('sequelize');
 
 exports.getChat = async (req, res) => {
@@ -18,7 +18,7 @@ exports.getChat = async (req, res) => {
 
         res.status(200).json({ success: true, messages });
     } catch (error) {
-        console.error("Error retrieving new messages:", error);
+        // console.error("Error retrieving new messages:", error);
         res.status(500).json({ success: false, message: "An error occurred while retrieving new messages." });
     }
     
@@ -40,7 +40,7 @@ exports.getNewMessages = async (req, res) => {
 
         res.status(200).json({ success: true, messages });
     } catch (error) {
-        console.error("Error retrieving new messages:", error);
+        // console.error("Error retrieving new messages:", error);
         res.status(500).json({ success: false, message: "An error occurred while retrieving new messages." });
     }
 };
